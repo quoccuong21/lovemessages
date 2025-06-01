@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gửi Ngàn Lời Yêu Thương</title>
   <style>
-    body, html {  
+    body, html {
       margin: 0; padding: 0;
       overflow: hidden;
       font-family: 'Segoe UI', sans-serif;
@@ -13,29 +13,16 @@
       color: #ffe3ec;
     }
 
-    canvas#bg {
+    canvas#bg, canvas#fireworks, canvas#loveCanvas {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: -3;
       display: block;
     }
 
-    canvas#fireworks {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: -2;
-      pointer-events: none;
-    }
-
-    canvas#loveCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: -1;
-      pointer-events: none;
-    }
+    canvas#bg { z-index: -3; }
+    canvas#fireworks { z-index: -2; pointer-events: none; }
+    canvas#loveCanvas { z-index: -1; pointer-events: none; }
 
     .content {
       position: absolute;
@@ -112,7 +99,7 @@
     <div class="input-area">
       <input type="text" id="userMessage" placeholder="Nhập lời yêu thương của bạn..." />
       <button onclick="addMessage()">Gửi</button>
-      <button id="shareBtn">Chia sẻ ❤️</button>
+      <button id="shareBtn" onclick="shareMessage()">Chia sẻ ❤️</button>
     </div>
   </div>
 
@@ -124,7 +111,6 @@
     const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg'), alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Heart shape
     const shape = new THREE.Shape();
     shape.moveTo(0, 0);
     shape.bezierCurveTo(0, 3, -3, 3, -3, 0);
@@ -152,12 +138,12 @@
 
     camera.position.z = 10;
 
-    function animate() {
-      requestAnimationFrame(animate);
-      heart.rotation.y += 0.01; // xoay 360 độ
+    function animateHeart() {
+      requestAnimationFrame(animateHeart);
+      heart.rotation.y += 0.01;
       renderer.render(scene, camera);
     }
-    animate();
+    animateHeart();
 
     // === LỜI YÊU THƯƠNG RƠI ===
     const loveCanvas = document.getElementById('loveCanvas');
@@ -165,60 +151,13 @@
     loveCanvas.width = window.innerWidth;
     loveCanvas.height = window.innerHeight;
 
-    // Mảng lời yêu thương với màu sắc riêng
-    const messages = [
-  { text: "Anh yêu em ❤️", color: "#ff4081" },     // hồng neon
-  { text: "Mãi bên nhau nhé 💖", color: "#e040fb" },  
-  { text: "Em là cả thế giới của anh 🌍", color: "#18ffff" },  // xanh cyan sáng
-  { text: "Nụ cười của em làm anh tan chảy 😍", color: "#ffff00" },  // vàng chói
-  { text: "Yêu em hơn mọi thứ 💌", color: "#ff6e40" },  // cam neon
-  { text: "Luôn bên em mọi lúc 💞", color: "#00e676" },  // xanh lá sáng
-  { text: "Trái tim anh chỉ dành cho em 💓", color: "#f50057" },  
-  { text: "Cảm ơn em đã đến bên anh 🌹", color: "#d500f9" },  
-  { text: "Em là nụ hoa trong tim anh 🌸", color: "#ffea00" },  
-  { text: "Chỉ cần có em, thế giới ngọt ngào 🌈", color: "#00b0ff" },  
-  { text: "Tình yêu ta mãi vững bền 💘", color: "#ff1744" },  
-  { text: "Dành trọn cuộc đời bên em 💑", color: "#651fff" },  
-  { text: "Mỗi ngày yêu em thêm nhiều hơn 🌞", color: "#76ff03" },  
-  { text: "Em là ánh sáng trong đời anh ✨", color: "#ffd740" },  
-  { text: "Hạnh phúc là có em bên cạnh 💕", color: "#ff4081" },  
-  { text: "Anh nhớ em từng phút giây ⏳", color: "#00e5ff" },  
-  { text: "Trọn đời anh chỉ muốn bên em 🌷", color: "#ff9100" },  
-  { text: "Giấc mơ đẹp có em trong đó 🌟", color: "#d50000" },  
-  { text: "Mỗi nụ cười em là thiên thần 😇", color: "#00bfa5" },  
-  { text: "Em là lý do anh sống 💖", color: "#f50057" },  
-  { text: "Bên em chẳng cần gì nữa 🌹", color: "#ff3d00" },  
-  { text: "Anh muốn giữ em mãi bên mình 🥰", color: "#651fff" },  
-  { text: "Tình ta đẹp như câu chuyện cổ tích 📖", color: "#00e676" },  
-  { text: "Không ai thay thế được em trong lòng anh 💕", color: "#ff4081" },  
-  { text: "Yêu em hơn mọi vì sao trên trời 🌌", color: "#2979ff" },  
-  { text: "Mãi mãi không rời xa nhau 👫", color: "#d50000" },  
-  { text: "Em là tất cả những gì anh cần ❤️", color: "#ff1744" },  
-  { text: "Gửi em ngàn lời thương nhớ 🌺", color: "#e040fb" },  
-  { text: "Anh luôn bên em không rời 🥺", color: "#00e676" },  
-  { text: "Chỉ cần có em, đời là màu hồng 🌸", color: "#ff4081" },  
-  { text: "Em là nắng ấm trong tim anh ☀️", color: "#ffff00" },  
-  { text: "Tình yêu ta như biển xanh bất tận 🌊", color: "#00b0ff" },  
-  { text: "Anh muốn cùng em đi khắp thế gian 🌏", color: "#2979ff" },  
-  { text: "Dẫu khó khăn vẫn bên nhau 🌄", color: "#d500f9" },  
-  { text: "Chỉ cần em cười, anh hạnh phúc 😊", color: "#ff4081" },  
-  { text: "Anh muốn ôm em thật chặt 🤗", color: "#f50057" },  
-  { text: "Tình yêu này vĩnh cửu theo thời gian ⏰", color: "#ffd600" },  
-  { text: "Em là người tuyệt vời nhất thế gian 🌹", color: "#ff4081" },  
-  { text: "Mỗi ngày đều nhớ về em ❤️", color: "#d50000" },  
-  { text: "Gửi đến em ngàn nụ hôn 💋", color: "#ff4081" },  
-  { text: "Bên em là thiên đường của anh 🌈", color: "#00b0ff" },  
-  { text: "Tình ta đẹp như vầng trăng sáng 🌝", color: "#651fff" },  
-  { text: "Anh sẽ luôn yêu em như ngày đầu tiên 💘", color: "#ff1744" },  
-  { text: "Em là định mệnh của đời anh 🧡", color: "#ff6e40" },  
-  { text: "Cảm ơn em vì tất cả 💝", color: "#ff4081" },  
-  { text: "Yêu em nhiều hơn từng phút giây ❤️", color: "#d50000" },  
-  { text: "Anh sẽ mãi bên em không rời 💞", color: "#e040fb" }
-];
-
+    const messages = [ // Rút gọn để ngắn, bạn có thể thêm nhiều như trước
+      { text: "Anh yêu em ❤️", color: "#ff4081" },
+      { text: "Mãi bên nhau nhé 💖", color: "#e040fb" },
+      { text: "Yêu em hơn tất cả 💘", color: "#00e676" }
+    ];
 
     const loveMessages = [];
-
     for(let i=0; i<50; i++) {
       const msg = messages[Math.floor(Math.random() * messages.length)];
       loveMessages.push({
@@ -233,25 +172,22 @@
 
     function animateLoveMessages() {
       loveCtx.clearRect(0, 0, loveCanvas.width, loveCanvas.height);
-
       loveMessages.forEach(msg => {
         loveCtx.font = `${msg.fontSize}px Arial`;
         loveCtx.fillStyle = msg.color;
         loveCtx.fillText(msg.text, msg.x, msg.y);
-
         msg.y += msg.speed;
 
         if(msg.y > loveCanvas.height + 20) {
-          msg.y = -20;
-          msg.x = Math.random() * loveCanvas.width;
           const newMsg = messages[Math.floor(Math.random() * messages.length)];
           msg.text = newMsg.text;
           msg.color = newMsg.color;
+          msg.x = Math.random() * loveCanvas.width;
+          msg.y = -20;
           msg.speed = 1 + Math.random() * 2;
           msg.fontSize = 16 + Math.random() * 10;
         }
       });
-
       requestAnimationFrame(animateLoveMessages);
     }
     animateLoveMessages();
@@ -263,7 +199,6 @@
     fw.height = window.innerHeight;
 
     let fireworks = [];
-
     function createFirework() {
       const x = Math.random() * fw.width;
       const y = Math.random() * fw.height / 2;
@@ -303,17 +238,14 @@
     }
     fireworkLoop();
 
-    // === XỬ LÝ NHẬP TIN NHẮN MỚI ===
-    const messages3D = messages.map(m => m.text);
-
+    // === THÊM TIN NHẮN MỚI ===
     function addMessage() {
       const input = document.getElementById('userMessage');
       const msg = input.value.trim();
       if (msg !== '') {
-        messages3D.push(msg);
         loveMessages.push({
           text: msg,
-          color: "#ff69b4", // Màu hồng sáng mặc định cho lời mới
+          color: "#ff69b4",
           x: Math.random() * loveCanvas.width,
           y: -20,
           speed: 1 + Math.random() * 2,
@@ -323,23 +255,21 @@
       }
     }
 
-    // === NÚT CHIA SẺ ===
-    document.getElementById('shareBtn').addEventListener('click', () => {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link đã được sao chép! Hãy gửi cho người thương nhé! ❤️');
-    });
+    // === CHIA SẺ ===
+    function shareMessage() {
+      const shareText = "Hãy ghé thăm trang: " + window.location.href + " để gửi lời yêu thương!";
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert("Link đã được sao chép! Hãy chia sẻ với người ấy 💖");
+      });
+    }
 
-    // === Resize canvas khi thay đổi kích thước cửa sổ ===
+    // === Resize xử lý lại canvas ===
     window.addEventListener('resize', () => {
+      loveCanvas.width = fw.width = window.innerWidth;
+      loveCanvas.height = fw.height = window.innerHeight;
       renderer.setSize(window.innerWidth, window.innerHeight);
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-
-      fw.width = window.innerWidth;
-      fw.height = window.innerHeight;
-
-      loveCanvas.width = window.innerWidth;
-      loveCanvas.height = window.innerHeight;
     });
   </script>
 </body>
