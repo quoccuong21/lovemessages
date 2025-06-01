@@ -2,81 +2,89 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Gửi Ngàn Lời Yêu Thương</title>
   <style>
-    body, html {  
+    html, body {
       margin: 0; padding: 0;
-      overflow: hidden;
-      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      width: 100%;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
       background: #000;
       color: #ffe3ec;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    canvas#bg, canvas#fireworks, canvas#loveCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
     }
 
     canvas#bg {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
       z-index: -3;
-      display: block;
     }
-
     canvas#fireworks {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
       z-index: -2;
-      pointer-events: none;
     }
-
     canvas#loveCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
       z-index: -1;
-      pointer-events: none;
     }
 
     .content {
       position: absolute;
       top: 5%;
-      width: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
       text-align: center;
-      padding: 20px;
-      z-index: 1;
+      padding: 10px;
+      z-index: 10;
     }
 
     h1 {
-      font-size: 3em;
+      font-size: 2.8em;
       color: #ff96c5;
       animation: fadeIn 3s ease-in-out;
       margin-bottom: 10px;
     }
 
     .input-area {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
       margin-top: 20px;
     }
 
     input, button {
       padding: 10px;
       font-size: 1em;
-      margin: 5px;
       border-radius: 8px;
       border: none;
+      box-sizing: border-box;
     }
 
     input {
       background-color: #fff0f5;
       color: #333;
-      width: 300px;
-      max-width: 80vw;
+      flex: 1 1 60%;
+      min-width: 150px;
+      max-width: 100%;
     }
 
     button {
       background-color: #ff4c84;
       color: white;
       cursor: pointer;
+      flex: 1 1 30%;
       min-width: 100px;
+      max-width: 100%;
       transition: background-color 0.3s ease;
     }
 
@@ -91,6 +99,26 @@
       background-color: #ff3e8e;
     }
 
+    #musicBtn {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 20;
+      background-color: #ff69b4;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 18px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 8px #ff69b4;
+      user-select: none;
+    }
+    #musicBtn:active {
+      box-shadow: 0 0 15px #ff2e6d;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -103,9 +131,10 @@
   <canvas id="fireworks"></canvas>
   <canvas id="loveCanvas"></canvas>
 
-  <audio autoplay loop>
+  <audio id="bgMusic" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/03/26/audio_2a65dbf905.mp3" type="audio/mpeg" />
   </audio>
+  <button id="musicBtn" title="Bật/Tắt nhạc">♪</button>
 
   <div class="content">
     <h1>💖 Gửi Ngàn Lời Yêu Thương 💖</h1>
@@ -121,9 +150,11 @@
     // === TRÁI TIM 3D XOAY ===
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg'), alpha: true });
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg'), alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
 
+    // Heart shape
     const shape = new THREE.Shape();
     shape.moveTo(0, 0);
     shape.bezierCurveTo(0, 3, -3, 3, -3, 0);
@@ -153,7 +184,7 @@
 
     function animate() {
       requestAnimationFrame(animate);
-      heart.rotation.y += 0.01;
+      heart.rotation.y += 0.01; // xoay 360 độ
       renderer.render(scene, camera);
     }
     animate();
@@ -161,35 +192,35 @@
     // === LỜI YÊU THƯƠNG RƠI ===
     const loveCanvas = document.getElementById('loveCanvas');
     const loveCtx = loveCanvas.getContext('2d');
-    loveCanvas.width = window.innerWidth;
-    loveCanvas.height = window.innerHeight;
 
+    // Mảng lời yêu thương với màu sắc riêng
     const messages = [
-      { text: "Anh yêu em ❤️", color: "#ff4081" },
-      { text: "Mãi bên nhau nhé 💖", color: "#e040fb" },
-      { text: "Em là cả thế giới của anh 🌍", color: "#18ffff" },
-      { text: "Nụ cười của em làm anh tan chảy 😍", color: "#ffff00" },
-      { text: "Yêu em hơn mọi thứ 💌", color: "#ff6e40" },
-      { text: "Luôn bên em mọi lúc 💞", color: "#00e676" },
+      { text: "Anh yêu em ❤️", color: "#ff4081" },  
+      { text: "Mãi bên nhau nhé 💖", color: "#e040fb" },  
+      { text: "Em là cả thế giới của anh 🌍", color: "#18ffff" },  
+      { text: "Nụ cười của em làm anh tan chảy 😍", color: "#ffff00" },  
+      { text: "Yêu em hơn mọi thứ 💌", color: "#ff6e40" },  
+      { text: "Luôn bên em mọi lúc 💞", color: "#00e676" },  
       { text: "Anh sẽ mãi bên em không rời 💞", color: "#e040fb" }
     ];
 
     const loveMessages = [];
 
-    for(let i = 0; i < 10; i++) {  // 🔽 Chỉ còn 10 messages
+    for(let i=0; i<20; i++) {  // giảm số lượng để nhẹ hơn trên điện thoại
       const msg = messages[Math.floor(Math.random() * messages.length)];
       loveMessages.push({
         text: msg.text,
         color: msg.color,
-        x: Math.random() * loveCanvas.width,
-        y: Math.random() * -loveCanvas.height,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * -window.innerHeight,
         speed: 1 + Math.random() * 2,
-        fontSize: 16 + Math.random() * 10
+        fontSize: 16 + Math.random() * 8
       });
     }
 
     function animateLoveMessages() {
       loveCtx.clearRect(0, 0, loveCanvas.width, loveCanvas.height);
+
       loveMessages.forEach(msg => {
         loveCtx.font = `${msg.fontSize}px Arial`;
         loveCtx.fillStyle = msg.color;
@@ -204,18 +235,16 @@
           msg.text = newMsg.text;
           msg.color = newMsg.color;
           msg.speed = 1 + Math.random() * 2;
-          msg.fontSize = 16 + Math.random() * 10;
+          msg.fontSize = 16 + Math.random() * 8;
         }
       });
+
       requestAnimationFrame(animateLoveMessages);
     }
-    animateLoveMessages();
 
     // === PHÁO HOA ===
     const fw = document.getElementById('fireworks');
     const fwCtx = fw.getContext('2d');
-    fw.width = window.innerWidth;
-    fw.height = window.innerHeight;
 
     let fireworks = [];
 
@@ -224,7 +253,7 @@
       const y = Math.random() * fw.height / 2;
       const colors = ['#ff4c84', '#ffdd00', '#ffffff', '#00e1ff'];
       const particles = [];
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 40; i++) {
         particles.push({
           x, y,
           dx: (Math.random() - 0.5) * 5,
@@ -256,44 +285,87 @@
       drawFireworks();
       requestAnimationFrame(fireworkLoop);
     }
-    fireworkLoop();
 
-    // === XỬ LÝ NHẬP TIN NHẮN MỚI ===
-    const messages3D = messages.map(m => m.text);
+    // === NÚT NHẠC ===
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+
+    musicBtn.onclick = () => {
+      if(bgMusic.paused) {
+        bgMusic.play();
+        musicBtn.style.backgroundColor = '#ff2e6d';
+      } else {
+        bgMusic.pause();
+        musicBtn.style.backgroundColor = '#ff69b4';
+      }
+    };
+
+    // === THÊM LỜI YÊU THƯƠNG TỪ INPUT ===
+    const userMessageInput = document.getElementById('userMessage');
 
     function addMessage() {
-      const input = document.getElementById('userMessage');
-      const msg = input.value.trim();
-      if (msg !== '') {
-        messages3D.push(msg);
-        loveMessages.push({
-          text: msg,
-          color: "#ff69b4",
-          x: Math.random() * loveCanvas.width,
-          y: -20,
-          speed: 1 + Math.random() * 2,
-          fontSize: 16 + Math.random() * 10
-        });
-        input.value = '';
-      }
+      const text = userMessageInput.value.trim();
+      if(text === '') return alert('Vui lòng nhập lời yêu thương!');
+
+      loveMessages.push({
+        text,
+        color: `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`,
+        x: Math.random() * window.innerWidth,
+        y: -20,
+        speed: 2 + Math.random() * 2,
+        fontSize: 18 + Math.random() * 6
+      });
+
+      userMessageInput.value = '';
     }
 
-    document.getElementById('shareBtn').addEventListener('click', () => {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link đã được sao chép! Hãy gửi cho người thương nhé! ❤️');
-    });
+    // === CHIA SẺ LỜI YÊU THƯƠNG ===
+    document.getElementById('shareBtn').onclick = () => {
+      const texts = loveMessages.map(m => m.text).join('\n');
+      if(navigator.share) {
+        navigator.share({
+          title: 'Ngàn Lời Yêu Thương',
+          text: texts,
+          url: window.location.href
+        }).catch(console.error);
+      } else {
+        alert('Trình duyệt của bạn không hỗ trợ chia sẻ. Bạn có thể copy thủ công: \n' + texts);
+      }
+    };
 
-    window.addEventListener('resize', () => {
-      renderer.setSize(window.innerWidth, window.innerHeight);
+    // === THƯỜNG XUYÊN RESIZE CANVAS ĐỂ CHUẨN KÍCH THƯỚC ===
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+
+      // Canvas 3D background
+      renderer.setSize(window.innerWidth, window.innerHeight, false);
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
 
-      fw.width = window.innerWidth;
-      fw.height = window.innerHeight;
+      // Canvas lời yêu thương
+      loveCanvas.width = window.innerWidth * dpr;
+      loveCanvas.height = window.innerHeight * dpr;
+      loveCanvas.style.width = window.innerWidth + 'px';
+      loveCanvas.style.height = window.innerHeight + 'px';
+      loveCtx.setTransform(1, 0, 0, 1, 0, 0);
+      loveCtx.scale(dpr, dpr);
 
-      loveCanvas.width = window.innerWidth;
-      loveCanvas.height = window.innerHeight;
-    });
+      // Canvas pháo hoa
+      fw.width = window.innerWidth * dpr;
+      fw.height = window.innerHeight * dpr;
+      fw.style.width = window.innerWidth + 'px';
+      fw.style.height = window.innerHeight + 'px';
+      fwCtx.setTransform(1, 0, 0, 1, 0, 0);
+      fwCtx.scale(dpr, dpr);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    animateLoveMessages();
+    fireworkLoop();
+
   </script>
+
 </body>
 </html>
