@@ -124,7 +124,6 @@
     const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg'), alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Heart shape
     const shape = new THREE.Shape();
     shape.moveTo(0, 0);
     shape.bezierCurveTo(0, 3, -3, 3, -3, 0);
@@ -154,7 +153,7 @@
 
     function animate() {
       requestAnimationFrame(animate);
-      heart.rotation.y += 0.01; // xoay 360 độ
+      heart.rotation.y += 0.01;
       renderer.render(scene, camera);
     }
     animate();
@@ -165,23 +164,19 @@
     loveCanvas.width = window.innerWidth;
     loveCanvas.height = window.innerHeight;
 
-    // Mảng lời yêu thương với màu sắc riêng
     const messages = [
-  { text: "Anh yêu em ❤️", color: "#ff4081" },     // hồng neon
-  { text: "Mãi bên nhau nhé 💖", color: "#e040fb" },  
-  { text: "Em là cả thế giới của anh 🌍", color: "#18ffff" },  // xanh cyan sáng
-  { text: "Nụ cười của em làm anh tan chảy 😍", color: "#ffff00" },  // vàng chói
-  { text: "Yêu em hơn mọi thứ 💌", color: "#ff6e40" },  // cam neon
-  { text: "Luôn bên em mọi lúc 💞", color: "#00e676" },  // xanh lá sáng
-  
- 
-  { text: "Anh sẽ mãi bên em không rời 💞", color: "#e040fb" }
-];
-
+      { text: "Anh yêu em ❤️", color: "#ff4081" },
+      { text: "Mãi bên nhau nhé 💖", color: "#e040fb" },
+      { text: "Em là cả thế giới của anh 🌍", color: "#18ffff" },
+      { text: "Nụ cười của em làm anh tan chảy 😍", color: "#ffff00" },
+      { text: "Yêu em hơn mọi thứ 💌", color: "#ff6e40" },
+      { text: "Luôn bên em mọi lúc 💞", color: "#00e676" },
+      { text: "Anh sẽ mãi bên em không rời 💞", color: "#e040fb" }
+    ];
 
     const loveMessages = [];
 
-    for(let i=0; i<50; i++) {
+    for(let i = 0; i < 10; i++) {  // 🔽 Chỉ còn 10 messages
       const msg = messages[Math.floor(Math.random() * messages.length)];
       loveMessages.push({
         text: msg.text,
@@ -195,7 +190,6 @@
 
     function animateLoveMessages() {
       loveCtx.clearRect(0, 0, loveCanvas.width, loveCanvas.height);
-
       loveMessages.forEach(msg => {
         loveCtx.font = `${msg.fontSize}px Arial`;
         loveCtx.fillStyle = msg.color;
@@ -213,7 +207,6 @@
           msg.fontSize = 16 + Math.random() * 10;
         }
       });
-
       requestAnimationFrame(animateLoveMessages);
     }
     animateLoveMessages();
@@ -275,7 +268,7 @@
         messages3D.push(msg);
         loveMessages.push({
           text: msg,
-          color: "#ff69b4", // Màu hồng sáng mặc định cho lời mới
+          color: "#ff69b4",
           x: Math.random() * loveCanvas.width,
           y: -20,
           speed: 1 + Math.random() * 2,
@@ -285,13 +278,11 @@
       }
     }
 
-    // === NÚT CHIA SẺ ===
     document.getElementById('shareBtn').addEventListener('click', () => {
       navigator.clipboard.writeText(window.location.href);
       alert('Link đã được sao chép! Hãy gửi cho người thương nhé! ❤️');
     });
 
-    // === Resize canvas khi thay đổi kích thước cửa sổ ===
     window.addEventListener('resize', () => {
       renderer.setSize(window.innerWidth, window.innerHeight);
       camera.aspect = window.innerWidth / window.innerHeight;
